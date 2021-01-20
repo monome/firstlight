@@ -78,41 +78,41 @@ function init()
   engine.release(1)
 
   -- configure the delay
-	audio.level_cut(1.0)
-	audio.level_adc_cut(1)
-	audio.level_eng_cut(1)
+  audio.level_cut(1.0)
+  audio.level_adc_cut(1)
+  audio.level_eng_cut(1)
   softcut.level(1,1.0)
   softcut.level_slew_time(1,0.25)
-	softcut.level_input_cut(1, 1, 1.0)
-	softcut.level_input_cut(2, 1, 1.0)
-	softcut.pan(1, 0.0)
+  softcut.level_input_cut(1, 1, 1.0)
+  softcut.level_input_cut(2, 1, 1.0)
+  softcut.pan(1, 0.0)
   softcut.play(1, 1)
-	softcut.rate(1, 1)                    
+  softcut.rate(1, 1)
   softcut.rate_slew_time(1,0.25)
-	softcut.loop_start(1, 0)
-	softcut.loop_end(1, 0.5)
-	softcut.loop(1, 1)
-	softcut.fade_time(1, 0.1)
-	softcut.rec(1, 1)
-	softcut.rec_level(1, 1)
-	softcut.pre_level(1, 0.85)            --[[ o_o ]]--
-	softcut.position(1, 0)
-	softcut.enable(1, 1)
-	softcut.filter_dry(1, 0);
-	softcut.filter_bp(1, 1.0);
-	softcut.filter_fc(1, 300);
-	softcut.filter_rq(1, 2.0);
+  softcut.loop_start(1, 0)
+  softcut.loop_end(1, 0.5)
+  softcut.loop(1, 1)
+  softcut.fade_time(1, 0.1)
+  softcut.rec(1, 1)
+  softcut.rec_level(1, 1)
+  softcut.pre_level(1, 0.85)            --[[ o_o ]]--
+  softcut.position(1, 0)
+  softcut.enable(1, 1)
+  softcut.filter_dry(1, 0);
+  softcut.filter_bp(1, 1.0);
+  softcut.filter_fc(1, 300);
+  softcut.filter_rq(1, 2.0);
 
   clock.run(tick)       -- start the sequencer
   clock.run(wind)       -- start the wind
 
   clock.run(function()  -- redraw the screen and grid at 15fps
-      while true do
-        clock.sleep(1/15)
-        redraw()
-        gridredraw()
-      end
-    end)
+    while true do
+      clock.sleep(1/15)
+      redraw()
+      gridredraw()
+    end
+  end)
 
   norns.enc.sens(1,8)   -- set the knob sensitivity
   norns.enc.sens(2,4)
