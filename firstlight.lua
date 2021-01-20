@@ -13,7 +13,7 @@
 
 -- lines starting with "--" are comments, they don't get executed
 
--- find the --[[ o_o ]]-- for good places to edit!
+-- find the --[[ 0_0 ]]-- for good places to edit!
 
 engine.name = 'PolyPerc'
 
@@ -74,8 +74,10 @@ end
 --------------------------------------------------------------------------------
 -- init runs first!
 function init()
-  -- configure the synth
+  -- configure the synth --[[ 0_0 ]]--
   engine.release(1)
+  engine.pw(0.5)
+  engine.cutoff(1000)
 
   -- configure the delay
   audio.level_cut(1.0)
@@ -88,18 +90,20 @@ function init()
   softcut.pan(1, 0.0)
   softcut.play(1, 1)
   softcut.rate(1, 1)
-  softcut.rate_slew_time(1,0.25)
+  softcut.rate_slew_time(1,1.0)
   softcut.loop_start(1, 0)
   softcut.loop_end(1, 0.5)
   softcut.loop(1, 1)
   softcut.fade_time(1, 0.1)
   softcut.rec(1, 1)
   softcut.rec_level(1, 1)
-  softcut.pre_level(1, 0.85)            --[[ o_o ]]--
+  softcut.pre_level(1, 0.85) --[[ 0_0 ]]--
   softcut.position(1, 0)
   softcut.enable(1, 1)
   softcut.filter_dry(1, 0);
+  softcut.filter_lp(1, 1.0);
   softcut.filter_bp(1, 1.0);
+  softcut.filter_hp(1, 1.0);
   softcut.filter_fc(1, 300);
   softcut.filter_rq(1, 2.0);
 
@@ -197,14 +201,8 @@ function gridredraw()
 end
 
 --------------------------------------------------------------------------------
--- initial delay values
-function init_delay()
-end
-
---------------------------------------------------------------------------------
 -- wind (values and draw function)
-x={}
-y={}
+x,y = {},{}
 for i=1,16 do
   x[i] = math.random(256)
   y[i] = math.random(128)
