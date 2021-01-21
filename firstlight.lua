@@ -22,7 +22,7 @@ g = grid.connect()
 
 -- make a table of numbers, along with variables
 -- to track length and current position
-numbers = {3,0,8,5,1,2,3,4,0,7,2,1,8,6,4,2}
+numbers = {3,1,8,5,1,2,3,4,1,7,2,1,8,6,4,2}
 length = 6
 pos = 0
 
@@ -135,7 +135,7 @@ function enc(n, delta)
     edit = util.clamp(edit+delta,1,length)
   elseif n==3 then
     -- E3 change the step value
-    numbers[edit] = util.clamp(numbers[edit]+delta,0,8)
+    numbers[edit] = util.clamp(numbers[edit]+delta,1,8)
   end
 end
 
@@ -183,11 +183,7 @@ end
 -- grid key
 function g.key(x, y, z)
   if z > 0 then
-    if numbers[x] == 9-y then   -- if pushing a lit key, toggle off
-      numbers[x] = 0
-    else                        -- else set new valu
-      numbers[x] = 9-y
-    end
+    numbers[x] = 9-y
   end
 end
 
