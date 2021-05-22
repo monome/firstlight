@@ -53,7 +53,7 @@ step = function()
 end
 
 -- wind blows chimes play
--- this funcion plays all of the notes in a table, in a random order and
+-- this function plays all of the notes in a table, in a random order and
 -- with random delay in between each. a new pattern is played periodically.
 wind = function()
   while(true) do
