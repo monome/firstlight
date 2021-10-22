@@ -1,5 +1,5 @@
 -- first light: call to edit
--- 1.1.0 @tehn + @dan_derks
+-- 1.1.0 @tehn
 -- l.llllllll.co/firstlight
 --
 -- see norns study zero!
