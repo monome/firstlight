@@ -62,7 +62,8 @@ wind = function()
       for i = 1,notes_seq.length do
         engine.cutoff(math.random(100,8000))
         notes_seq:select(math.random(notes_seq.length))
-        engine.hz(notes_seq())
+        local note = notes_seq()
+        engine.hz(note)
         clock.sleep(0.1)
       end
     end
