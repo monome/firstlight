@@ -57,13 +57,13 @@ end
 wind = function()
   while(true) do
     light = 15
-    --[[ 0_0 ]]--
-    if math.random() > 0.2 and chimes then
+    if chimes then
       for i = 1,notes_seq.length do
-        engine.cutoff(math.random(100,8000))
-        notes_seq:select(math.random(notes_seq.length))
-        local note = notes_seq()
-        engine.hz(note)
+        if math.random() > 0.2 then
+          notes_seq:select(math.random(notes_seq.length))
+          local note = notes_seq()
+          engine.hz(note)
+        end
         clock.sleep(0.1)
       end
     end
