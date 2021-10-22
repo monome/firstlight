@@ -1,5 +1,5 @@
 -- first light: call to edit
--- 1.0.0 @tehn
+-- 1.1.0 @tehn + @dan_derks
 -- l.llllllll.co/firstlight
 --
 -- see norns study zero!
@@ -17,16 +17,17 @@
 
 engine.name = 'PolyPerc'
 
-g = grid.connect()
+sequins = require 'sequins' -- a sequencer library built into norns, see: https://monome.org/docs/norns/reference/lib/sequins
 
+g = grid.connect() -- if there's a grid connected to slot 1 in DEVICES > GRID, connect it to this script
 
--- make a table of numbers, along with variables
--- to track length and current position
-numbers = {3,1,8,5,1,2,3,4,1,7,2,1,8,6,4,2}
-length = 6
-pos = 0
+delay_seq = sequins{3,1,8,5,1,2,3,4,1,7,2,1,8,6,4,2} -- a sequencer of delay loop times, to be divided by 8
+delay_seq.length = 6 -- let's start with the first 6 values
 
-edit = 1 -- which number we're editing
+--[[ 0_0 ]]--
+notes_seq = sequins{400,451,525,555} -- a sequencer of note values, in hz
+
+edit = 1 -- which step of the delay_seq we're editing
 
 -- on/off for stepped sequence and chimes
 sequence = true
@@ -34,9 +35,9 @@ chimes = true
 
 
 -- system clock tick
--- this function is started by init() and loops forever
--- if the sequence is on, it steps forward on each tick
--- tempo is controlled via the global clock, which can be set in the PARAM menu 
+-- this function is started by init() and runs forever
+-- if the sequence is on, it steps forward on each clock tick
+-- tempo is controlled via the global clock, which can be set in the PARAMETERS menu 
 tick = function()
   while true do
     clock.sync(1)
@@ -47,9 +48,7 @@ end
 -- sequence step forward
 -- advance the position and do something with the number
 step = function()
-  pos = util.wrap(pos+1,1,length)
-  --[[ 0_0 ]]--
-  softcut.loop_end(1,numbers[pos]/8)
+  softcut.loop_end(1,delay_seq()/8)
 end
 
 -- wind blows chimes play
@@ -59,12 +58,13 @@ wind = function()
   while(true) do
     light = 15
     --[[ 0_0 ]]--
-    notes = {400,451,525,555}
-    while chimes and #notes > 0 do
-      if math.random() > 0.2 then
-        engine.hz(table.remove(notes,math.random(#notes)))
+    if math.random() > 0.2 and chimes then
+      for i = 1,notes_seq.length do
+        engine.cutoff(math.random(100,8000))
+        notes_seq:select(math.random(notes_seq.length))
+        engine.hz(notes_seq())
+        clock.sleep(0.1)
       end
-      clock.sleep(0.1)
     end
     clock.sleep(math.random(3,9))
   end
@@ -128,14 +128,14 @@ end
 function enc(n, delta)
   if n==1 then
     -- E1 change the length of the sequence
-    length = util.clamp(length+delta,1,16)
-    edit = util.clamp(edit,1,length)
+    delay_seq.length = util.clamp(delay_seq.length+delta,1,#delay_seq.data)
+    edit = util.clamp(edit,1,delay_seq.length)
   elseif n==2 then
     -- E2 change which step to edit
-    edit = util.clamp(edit+delta,1,length)
+    edit = util.clamp(edit+delta,1,delay_seq.length)
   elseif n==3 then
     -- E3 change the step value
-    numbers[edit] = util.clamp(numbers[edit]+delta,1,8)
+    delay_seq[edit] = util.clamp(delay_seq[edit]+delta,1,8)
   end
 end
 
@@ -162,11 +162,11 @@ function redraw()
   draw_wind()
 
   -- draw bars for numbers
-  offset = 64 - length*2
-  for i=1,length do
-    screen.level(i==pos and 15 or 1)
+  offset = 64 - delay_seq.length*2
+  for i=1,delay_seq.length do
+    screen.level(i==delay_seq.ix and 15 or 1)
     screen.move(offset+i*4,60)
-    screen.line_rel(0,numbers[i]*-4+-1)
+    screen.line_rel(0,delay_seq[i]*-4+-1)
     screen.stroke()
   end
 
@@ -183,15 +183,15 @@ end
 -- grid key
 function g.key(x, y, z)
   if z > 0 then
-    numbers[x] = 9-y
+    delay_seq[x] = 9-y
   end
 end
 
 -- grid redraw
 function gridredraw()
   g:all(0)
-  for i=1,length do
-    g:led(i,9-numbers[i],i==pos and 15 or 3)
+  for i=1,delay_seq.length do
+    g:led(i,9-delay_seq[i],i==delay_seq.ix and 15 or 3)
   end
   g:refresh()
 end
@@ -224,4 +224,3 @@ function draw_wind()
     ay = ay+0.004
   end
 end
-
