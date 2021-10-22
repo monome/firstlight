@@ -60,7 +60,8 @@ wind = function()
     if chimes then
       for i = 1,notes_seq.length do
         if math.random() > 0.2 then
-          notes_seq:select(math.random(notes_seq.length))
+          local random_note = math.random(notes_seq.length)
+          notes_seq:select(random_note)
           local note = notes_seq()
           engine.hz(note)
         end
