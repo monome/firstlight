@@ -21,13 +21,13 @@ sequins = require 'sequins' -- a sequencer library built into norns, see: https:
 
 g = grid.connect() -- if there's a grid connected to slot 1 in DEVICES > GRID, connect it to this script
 
-delay_seq = sequins{3,1,8,5,1,2,3,4,1,7,2,1,8,6,4,2} -- a sequencer of delay loop times, to be divided by 8
-delay_seq.length = 6 -- let's start with the first 6 values
+delays = sequins{3,1,8,5,1,2,3,4,1,7,2,1,8,6,4,2} -- a sequencer of delay loop times, to be divided by 8
+delays.length = 6 -- let's start with the first 6 values
 
 --[[ 0_0 ]]--
-notes_seq = sequins{400,451,525,555} -- a sequencer of note values, in hz
+notes = sequins{400,451,525,555} -- a sequencer of note values, in hz
 
-edit = 1 -- which step of the delay_seq we're editing
+edit = 1 -- which step of the delays sequins we're editing
 
 -- on/off for stepped sequence and chimes
 sequence = true
@@ -48,7 +48,7 @@ end
 -- sequence step forward
 -- advance the position and do something with the number
 step = function()
-  softcut.loop_end(1,delay_seq()/8)
+  softcut.loop_end(1,delays()/8)
 end
 
 -- wind blows chimes play
@@ -58,12 +58,12 @@ wind = function()
   while(true) do
     light = 15
     if chimes then
-      for i = 1,notes_seq.length do
+      for i = 1,notes.length do
         if math.random() > 0.2 then
-          local random_note = math.random(notes_seq.length)
-          notes_seq:select(random_note)
-          local note = notes_seq()
-          engine.hz(note)
+          local position = math.random(notes.length)
+          notes:select(position)
+          local frequency = notes()
+          engine.hz(frequency)
         end
         clock.sleep(0.1)
       end
@@ -130,14 +130,14 @@ end
 function enc(n, delta)
   if n==1 then
     -- E1 change the length of the sequence
-    delay_seq.length = util.clamp(delay_seq.length+delta,1,#delay_seq.data)
-    edit = util.clamp(edit,1,delay_seq.length)
+    delays.length = util.clamp(delays.length+delta,1,#delays.data)
+    edit = util.clamp(edit,1,delays.length)
   elseif n==2 then
     -- E2 change which step to edit
-    edit = util.clamp(edit+delta,1,delay_seq.length)
+    edit = util.clamp(edit+delta,1,delays.length)
   elseif n==3 then
     -- E3 change the step value
-    delay_seq[edit] = util.clamp(delay_seq[edit]+delta,1,8)
+    delays[edit] = util.clamp(delays[edit]+delta,1,8)
   end
 end
 
@@ -164,11 +164,11 @@ function redraw()
   draw_wind()
 
   -- draw bars for numbers
-  offset = 64 - delay_seq.length*2
-  for i=1,delay_seq.length do
-    screen.level(i==delay_seq.ix and 15 or 1)
+  offset = 64 - delays.length*2
+  for i=1,delays.length do
+    screen.level(i==delays.ix and 15 or 1)
     screen.move(offset+i*4,60)
-    screen.line_rel(0,delay_seq[i]*-4+-1)
+    screen.line_rel(0,delays[i]*-4+-1)
     screen.stroke()
   end
 
@@ -185,15 +185,15 @@ end
 -- grid key
 function g.key(x, y, z)
   if z > 0 then
-    delay_seq[x] = 9-y
+    delays[x] = 9-y
   end
 end
 
 -- grid redraw
 function gridredraw()
   g:all(0)
-  for i=1,delay_seq.length do
-    g:led(i,9-delay_seq[i],i==delay_seq.ix and 15 or 3)
+  for i=1,delays.length do
+    g:led(i,9-delays[i],i==delays.ix and 15 or 3)
   end
   g:refresh()
 end
