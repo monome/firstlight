@@ -21,13 +21,14 @@ sequins = require 'sequins' -- a sequencer library built into norns, see: https:
 
 g = grid.connect() -- if there's a grid connected to slot 1 in DEVICES > GRID, connect it to this script
 
+--[[ 0_0 ]]--
 delays = sequins{3,1,8,5,1,2,3,4,1,7,2,1,8,6,4,2} -- a sequencer of delay loop times, to be divided by 8
 delays.length = 6 -- let's start with the first 6 values
 
 --[[ 0_0 ]]--
 notes = sequins{400,451,525,555} -- a sequencer of note values, in hz
 
-edit = 1 -- which step of the delays sequins we're editing
+edit = 1 -- which step of the 'delays' sequins we're editing
 
 -- on/off for stepped sequence and chimes
 sequence = true
